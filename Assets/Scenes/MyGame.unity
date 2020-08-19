@@ -396,6 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  speedModifier: 1.5
   mouseSensitivity: 100
 --- !u!1 &534669902
 GameObject:
