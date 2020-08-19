@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public float speed = 10f;
+    public float speedModifier;
     public float mouseSensitivity = 100f;
 
     private float horizontal;
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private int floorMask;
     private Vector3 movement;
     private Rigidbody rigidbody;
+
     // private Animator animator;
 
     private void Awake()
@@ -38,17 +40,17 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         // Store the input axes.
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        horizontal = Input.GetAxisRaw("Horizontal");
+        vertical = Input.GetAxisRaw("Vertical");
 
         // Move the player around the scene.
-        Move(horizontal, vertical);
+        Move();
 
         // Turn the player to face the mouse cursor.
         Turning();
     }
 
-    void Move(float horizontal, float vertical)
+    void Move()
     {
         // Set the movement vector based on the axis input.
         movement.Set(horizontal, 0f, vertical);
@@ -56,8 +58,23 @@ public class PlayerController : MonoBehaviour
         // Normalise the movement vector and make it proportional to the speed per second.
         movement = movement.normalized * speed * Time.deltaTime;
 
-        // Move the player to it's current position plus the movement.
-        rigidbody.MovePosition(transform.position + movement);
+        // Move the player to it's current position plus the movement if Running.
+        if (IsWalking() && Input.GetKey(KeyCode.LeftShift))
+        {
+            movement = movement.normalized * (speed * speedModifier) * Time.deltaTime;
+            rigidbody.MovePosition(transform.position + movement);
+        }
+        else
+        {
+            // Move the player to it's current position plus the movement.
+            rigidbody.MovePosition(transform.position + movement);
+        }
+    }
+
+    // Returns a boolean that is true if either of the input axes is non-zero.
+    private bool IsWalking()
+    {
+        return horizontal != 0f || vertical != 0f;
     }
 
     void Turning()
