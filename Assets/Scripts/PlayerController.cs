@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed = 10f;
-    public float speedModifier;
-    public float mouseSensitivity = 100f;
+    [SerializeField] private float speed = 10f;
+    [SerializeField] private float speedModifier;
+    [SerializeField] private float mouseSensitivity = 100f;
 
     private float horizontal;
     private float vertical;
