@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 10f;
     [SerializeField] private float speedModifier;
     [SerializeField] private float mouseSensitivity = 100f;
+    [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private Camera camera;
 
     private float horizontal;
@@ -60,7 +61,7 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 playerToMouse = hit.point - transform.position;
             playerToMouse.y = 0f;
-            rigidbody.rotation = Quaternion.LookRotation(playerToMouse);
+            rigidbody.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(playerToMouse), rotationSpeed * Time.deltaTime);
         }
     }
 
