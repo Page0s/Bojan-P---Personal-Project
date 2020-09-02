@@ -79,10 +79,14 @@ public class PlayerController : MonoBehaviour
             movement = movement.normalized * (speed * speedModifier) * Time.deltaTime;
             rigidbody.MovePosition(transform.position + movement);
         }
-        else
+        else if(IsWalking())
         {
             // Move the player to it's current position plus the movement.
             rigidbody.MovePosition(transform.position + movement);
+        }
+        else
+        {
+            rigidbody.angularVelocity = Vector3.zero;
         }
     }
 
