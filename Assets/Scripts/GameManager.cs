@@ -6,7 +6,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
-    [SerializeField] private Transform spawnLocation;
+    [SerializeField] private Transform[] spawnLocations;
 
     private float enemyAmount = 5;
     private bool endGame = false;
@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
 
     private void spawnEnemy()
     {
+        Transform spawnLocation = spawnLocations[UnityEngine.Random.Range(0, spawnLocations.Length)];
         Instantiate(enemyPrefab, spawnLocation.position, spawnLocation.rotation);
     }
 
