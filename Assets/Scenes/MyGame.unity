@@ -301,8 +301,9 @@ GameObject:
   - component: {fileID: 343203382}
   - component: {fileID: 343203381}
   - component: {fileID: 343203380}
-  - component: {fileID: 343203385}
   - component: {fileID: 343203384}
+  - component: {fileID: 343203385}
+  - component: {fileID: 343203386}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -419,6 +420,20 @@ MonoBehaviour:
   mouseSensitivity: 400
   rotationSpeed: 10
   camera: {fileID: 534669904}
+--- !u!114 &343203386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 343203379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7cc6e521ced4ac4997931c2423537d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  stamina: 100
 --- !u!1 &355435625
 GameObject:
   m_ObjectHideFlags: 0
