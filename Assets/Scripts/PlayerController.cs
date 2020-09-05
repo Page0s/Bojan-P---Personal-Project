@@ -13,10 +13,15 @@ public class PlayerController : MonoBehaviour
 
     private float horizontal;
     private float vertical;
+    private float fireRate = 3;
+    private float nextTimeToFire = 0f;
     private float camRayLength = 100f;
     private int floorMask;
     private Vector3 movement;
     private Rigidbody rigidbody;
+    private ParticleSystem gunParticle;
+    private GameManager gameManager;
+    private PlayerStats playerStats;
 
     // private Animator animator;
 
@@ -24,13 +29,15 @@ public class PlayerController : MonoBehaviour
     {
         floorMask = LayerMask.GetMask("Floor");
         rigidbody = GetComponent<Rigidbody>();
+        playerStats = GetComponent<PlayerStats>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         // animator = GetComponent<Animator>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        gunParticle = GameObject.Find("Particle Gun").GetComponent<ParticleSystem>();
     }
 
     private void FixedUpdate()
@@ -44,6 +51,16 @@ public class PlayerController : MonoBehaviour
 
         // Turn the player to face the mouse cursor.
         Turning();
+    }
+
+    private void Update()
+    {
+        // Fire gun left click
+        if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire)
+        {
+            nextTimeToFire = Time.time + 1f / fireRate;
+            gunParticle.Play();
+        }
     }
 
     private void Turning()
@@ -88,5 +105,14 @@ public class PlayerController : MonoBehaviour
     private bool IsWalking()
     {
         return horizontal != 0f || vertical != 0f;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        // If enemy layer collided with the object, damage the player by the amount
+        if(collision.gameObject.layer == 11)
+        {
+            gameManager.DamagePlayer(collision, playerStats.Health);
+        }
     }
 }
