@@ -29,13 +29,8 @@ public class PlayerController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         playerStats = GetComponent<PlayerStats>();
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-        // animator = GetComponent<Animator>();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
         gunParticle = GameObject.Find("Particle Gun").GetComponent<ParticleSystem>();
+        // animator = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
@@ -85,7 +80,7 @@ public class PlayerController : MonoBehaviour
         // Move the player to it's current position plus the movement if Running.
         if (IsWalking() && Input.GetKey(KeyCode.LeftShift))
         {
-            movement = movement.normalized * (playerStats.MovementSpeed * playerStats.SpeedModifier) * Time.deltaTime;
+            movement = movement.normalized * (playerStats.MovementSpeed * playerStats.SprintSpeedModifier) * Time.deltaTime;
             rigidbody.MovePosition(transform.position + movement);
         }
         else if(IsWalking())
