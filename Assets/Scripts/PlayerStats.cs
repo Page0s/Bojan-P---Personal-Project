@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,17 +8,17 @@ public class PlayerStats : MonoBehaviour
     public int Health { get => health; }
     public int Experience { get; private set; }
     public int PlayerLevel { get; private set; }
-    public float SpeedModifier { get; private set; }
-    public float MovementSpeed { get; private set; }
+    public float SprintSpeedModifier { get; set; }
+    public float MovementSpeed { get; set; }
 
     [SerializeField] private int health = 100;
     [SerializeField] private int stamina = 100;
-    [SerializeField] private float speedModifier = 1.5f;
-    [SerializeField] private float movementSpeed = 10f;
 
-    private void Start()
+    private void Awake()
     {
         PlayerLevel = 1;
+        MovementSpeed = 10f;
+        SprintSpeedModifier = 1.5f;
     }
 
     // Damage player's HP by projectile damage amount
