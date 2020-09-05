@@ -5,20 +5,15 @@ using UnityEngine;
 public class PlayerStats : MonoBehaviour
 {
     public int Health { get => health; }
+    public int Experience { get; private set; }
+    public int PlayerLevel { get; private set; }
 
     [SerializeField] private int health = 100;
     [SerializeField] private int stamina = 100;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        PlayerLevel = 1;
     }
 
     // Damage player's HP by projectile damage amount
@@ -31,4 +26,16 @@ public class PlayerStats : MonoBehaviour
     }
 
     public bool isDead() => health <= 0;
+
+    public void AddExperience(int amount)
+    {
+        Experience += amount;
+
+        // DING!!!
+        if(Experience >= 100)
+        {
+            Experience -= 100;
+            PlayerLevel += 1;
+        }
+    }
 }
