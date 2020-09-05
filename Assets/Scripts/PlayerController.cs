@@ -5,8 +5,6 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed = 10f;
-    [SerializeField] private float speedModifier;
     [SerializeField] private float mouseSensitivity = 100f;
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private Camera camera;
@@ -82,12 +80,12 @@ public class PlayerController : MonoBehaviour
         movement.Set(horizontal, 0f, vertical);
 
         // Normalise the movement vector and make it proportional to the speed per second.
-        movement = movement.normalized * speed * Time.deltaTime;
+        movement = movement.normalized * playerStats.MovementSpeed * Time.deltaTime;
 
         // Move the player to it's current position plus the movement if Running.
         if (IsWalking() && Input.GetKey(KeyCode.LeftShift))
         {
-            movement = movement.normalized * (speed * speedModifier) * Time.deltaTime;
+            movement = movement.normalized * (playerStats.MovementSpeed * playerStats.SpeedModifier) * Time.deltaTime;
             rigidbody.MovePosition(transform.position + movement);
         }
         else if(IsWalking())

@@ -7,9 +7,13 @@ public class PlayerStats : MonoBehaviour
     public int Health { get => health; }
     public int Experience { get; private set; }
     public int PlayerLevel { get; private set; }
+    public float SpeedModifier { get; private set; }
+    public float MovementSpeed { get; private set; }
 
     [SerializeField] private int health = 100;
     [SerializeField] private int stamina = 100;
+    [SerializeField] private float speedModifier = 1.5f;
+    [SerializeField] private float movementSpeed = 10f;
 
     private void Start()
     {
