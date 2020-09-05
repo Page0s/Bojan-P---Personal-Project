@@ -55,23 +55,31 @@ public class GameManager : MonoBehaviour
     // Damage enemy's HP by projectile damage amount
     public void DamageEnemy(GameObject other, int damage)
     {
-        other.gameObject.GetComponent<EnemyStats>().DamageEnemy(damage);
+        EnemyStats enemyStats = other.gameObject.GetComponent<EnemyStats>();
 
-        Debug.Log(other.gameObject.GetComponent<EnemyStats>().Health);
+        enemyStats.DamageEnemy(damage);
+
+        Debug.Log(enemyStats.Health);
 
         // Enemy dies if HP is 0
-        if (other.gameObject.GetComponent<EnemyStats>().isDead())
+        if (enemyStats.isDead())
         {
+            // Adds enemy XP to player total XP
+            playerStats.AddExperience(enemyStats.ExperienceValue);
             Destroy(other.gameObject);
 
             Debug.Log("Enemy died!");
+            Debug.Log($"Player XP: {playerStats.Experience}");
+            Debug.Log($"Player Level: {playerStats.PlayerLevel}");
         }
     }
 
     // Damage player's HP by projectile damage amount
     internal void DamagePlayer(Collision collision, int health)
     {
-        playerStats.Damage(collision.gameObject.GetComponent<EnemyStats>().Damage);
+        EnemyStats enemyStats = collision.gameObject.GetComponent<EnemyStats>();
+
+        playerStats.Damage(enemyStats.Damage);
 
         Debug.Log(playerStats.Health);
     }
