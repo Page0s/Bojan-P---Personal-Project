@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
+    public int Health { get => health; }
+
     [SerializeField] private int health = 100;
     [SerializeField] private int stamina = 100;
 
@@ -19,6 +21,7 @@ public class PlayerStats : MonoBehaviour
         
     }
 
+    // Damage player's HP by projectile damage amount
     public void Damage(int damage)
     {
         if(health > 0)
@@ -27,5 +30,5 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    public bool isDead() => health > 0;
+    public bool isDead() => health <= 0;
 }
