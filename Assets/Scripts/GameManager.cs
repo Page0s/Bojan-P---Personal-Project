@@ -12,10 +12,14 @@ public class GameManager : MonoBehaviour
     private bool endGame = false;
     private PlayerStats playerStats;
 
+    private void Awake()
+    {
+        playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
         StartCoroutine(SpawnEnemyWave());
     }
 
@@ -75,12 +79,34 @@ public class GameManager : MonoBehaviour
     }
 
     // Damage player's HP by projectile damage amount
-    internal void DamagePlayer(Collision collision, int health)
+    public void DamagePlayer(Collision collision, int health)
     {
         EnemyStats enemyStats = collision.gameObject.GetComponent<EnemyStats>();
 
         playerStats.Damage(enemyStats.Damage);
 
         Debug.Log(playerStats.Health);
+    }
+
+    public void ModifyAbility(int abilityIndex)
+    {
+        switch (abilityIndex)
+        {
+            case 1:
+                Debug.Log($"Player was moving with speed: {playerStats.MovementSpeed}");
+                playerStats.MovementSpeed = 20;
+                Debug.Log($"Current player movement speed: {playerStats.MovementSpeed}");
+                break;
+            case 2:
+                Debug.Log($"Player spring speed modifier: {playerStats.SprintSpeedModifier}");
+                playerStats.SprintSpeedModifier = 2f;
+                Debug.Log($"Current player sprint movement modifier: {playerStats.SprintSpeedModifier}");
+                break;
+            case 3:
+                Debug.Log($"Player wepon damage: ");
+                break;
+            default:
+                break;
+        }
     }
 }
