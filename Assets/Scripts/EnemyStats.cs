@@ -4,21 +4,14 @@ using UnityEngine;
 
 public class EnemyStats : MonoBehaviour
 {
+    public int Health { get => health; }
+    public int Damage { get => damage; }
+
     [SerializeField] private int health = 100;
+    [SerializeField] private int damage = 20;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void Damage(int damage)
+    // Damage enemy's HP by projectile damage amount
+    public void DamageEnemy(int damage)
     {
         if (health > 0)
         {
@@ -26,5 +19,5 @@ public class EnemyStats : MonoBehaviour
         }
     }
 
-    public bool isDead() => health > 0;
+    public bool isDead() => health <= 0;
 }
