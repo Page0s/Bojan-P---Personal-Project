@@ -108,8 +108,6 @@ public class GameManager : MonoBehaviour
     // Damage spawner's HP by projectile damage amount
     public void DamageSpawner(GameObject other, int damage)
     {
-        ++destroyedSpawners;
-
         Spawner spawner = other.gameObject.GetComponent<Spawner>();
 
         spawner.DamageSpawner(damage);
@@ -119,6 +117,10 @@ public class GameManager : MonoBehaviour
         // Adds spawner XP to player total XP
         if (spawner.isDead())
         {
+            Debug.Log("Destroyed Spawners: " + destroyedSpawners);
+            ++destroyedSpawners;
+            Debug.Log($"Destroyed Spawners: {destroyedSpawners}");
+
             playerStats.AddExperience(spawner.ExperienceValue);
             other.SetActive(false);
 
