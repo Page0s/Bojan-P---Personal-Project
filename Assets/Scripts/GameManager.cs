@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float timeBetweenEnemySpawn = 2f;
 
     private float enemyAmount = 5;
+    private float slowdownFactor = 0.05f;
     private bool spawningEnemysEnded = false;
     private bool gameEnded = false;
     private PlayerStats playerStats;
@@ -71,6 +72,15 @@ public class GameManager : MonoBehaviour
     private void EndGame()
     {
         gameEnded = true;
+        StartCoroutine(SlowMotionEndGame());
+    }
+
+    private IEnumerator SlowMotionEndGame()
+    {
+        Time.timeScale = slowdownFactor;
+        Time.fixedDeltaTime = Time.timeScale * 0.02f;
+        yield return new WaitForSecondsRealtime(10);
+        Time.timeScale = 0;
     }
 
     // Damage enemy's HP by projectile damage amount
