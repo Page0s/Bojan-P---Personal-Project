@@ -22,5 +22,9 @@ public class ParticleGun : MonoBehaviour
         {
             gameManager.DamageEnemy(other, damage);
         }
+        else if (other.gameObject.layer == 12)
+        {
+            gameManager.DamageSpawner(other, damage);
+        }
     }
 }
