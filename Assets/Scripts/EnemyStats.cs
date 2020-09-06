@@ -13,6 +13,13 @@ public class EnemyStats : MonoBehaviour
     [SerializeField] private int damage = 20;
     [SerializeField] private int experienceValue = 10;
 
+    private AudioSource audioSource;
+
+    private void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     // Damage enemy's HP by projectile damage amount
     public void DamageEnemy(int damage)
     {
