@@ -8,6 +8,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip[] playerTakeDamageClips;
     [SerializeField] private AudioClip[] playerDeathClips;
     [SerializeField] private AudioClip[] enemyDeathClips;
+    [SerializeField] private AudioClip[] enemyIdleClips;
     [SerializeField] private AudioClip[] newWaveSounds;
 
     [SerializeField] private AudioSource newWaveAudioSource;
@@ -20,6 +21,11 @@ public class SoundManager : MonoBehaviour
     private bool playEnemyDeathSound;
     private bool playPlayerTakeDamgeSound = false;
     private bool playPlayerDeathSound;
+
+    internal void PlayEnemyIdleSound()
+    {
+        audioSource.PlayOneShot(enemyIdleClips[Random.Range(0, enemyIdleClips.Length)], 0.2f);
+    }
 
     private void Awake()
     {
