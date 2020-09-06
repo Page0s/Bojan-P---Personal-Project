@@ -16,9 +16,9 @@ TagManager:
   - 
   - PostProcessing
   - Floor
-  - 
-  - 
-  - 
+  - Environment
+  - Enemy
+  - Spawner
   - 
   - 
   - 
