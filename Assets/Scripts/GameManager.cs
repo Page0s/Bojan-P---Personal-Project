@@ -7,14 +7,19 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private Transform[] spawnLocations;
+    [SerializeField] private float timeBetweenEnemySpawn = 2f;
 
     private float enemyAmount = 5;
-    private bool endGame = false;
+    private bool spawningEnemysEnded = false;
+    private bool gameEnded = false;
     private PlayerStats playerStats;
+    private Spawner[] spawners;
+    private int destroyedSpawners;
 
     private void Awake()
     {
         playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
+        spawners = FindObjectsOfType<Spawner>();
     }
 
     // Start is called before the first frame update
@@ -28,9 +33,9 @@ public class GameManager : MonoBehaviour
         for(int i = 0; i < enemyAmount; ++i)
         {
             spawnEnemy();
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(timeBetweenEnemySpawn);
         }
-        endGame = true;
+        spawningEnemysEnded = true;
     }
 
     private void spawnEnemy()
@@ -43,7 +48,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         // Stop the game when endGame == true
-        if (endGame)
+        if (spawningEnemysEnded)
         {
             Debug.Log("Stop spawning enemys!");
             StopCoroutine(SpawnEnemyWave());
@@ -51,9 +56,21 @@ public class GameManager : MonoBehaviour
 
         if (playerStats.isDead())
         {
-            endGame = true;
-            Debug.Log("Game Over!");
+            Debug.Log("You Lose! Player died!");
+            spawningEnemysEnded = true;
+            EndGame();
         }
+        else if(destroyedSpawners == spawners.Length)
+        {
+            Debug.Log("You Win! All spawners destroyed!");
+            spawningEnemysEnded = true;
+            EndGame();
+        }
+    }
+
+    private void EndGame()
+    {
+        gameEnded = true;
     }
 
     // Damage enemy's HP by projectile damage amount
@@ -83,9 +100,32 @@ public class GameManager : MonoBehaviour
     {
         EnemyStats enemyStats = collision.gameObject.GetComponent<EnemyStats>();
 
-        playerStats.Damage(enemyStats.Damage);
+        playerStats.DamagePlayer(enemyStats.Damage);
 
         Debug.Log(playerStats.Health);
+    }
+
+    // Damage spawner's HP by projectile damage amount
+    public void DamageSpawner(GameObject other, int damage)
+    {
+        ++destroyedSpawners;
+
+        Spawner spawner = other.gameObject.GetComponent<Spawner>();
+
+        spawner.DamageSpawner(damage);
+
+        Debug.Log($"Spawner HP: {spawner.Health}");
+
+        // Adds spawner XP to player total XP
+        if (spawner.isDead())
+        {
+            playerStats.AddExperience(spawner.ExperienceValue);
+            other.SetActive(false);
+
+            Debug.Log("Spawned destroyed!");
+            Debug.Log($"Player XP: {playerStats.Experience}");
+            Debug.Log($"Player Level: {playerStats.PlayerLevel}");
+        }
     }
 
     public void ModifyAbility(int abilityIndex)
