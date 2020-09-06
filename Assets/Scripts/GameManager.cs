@@ -12,14 +12,15 @@ public class GameManager : MonoBehaviour
     private float enemyAmount = 5;
     private float slowdownFactor = 0.05f;
     private bool spawningEnemysEnded = false;
-    private bool gameEnded = false;
     private PlayerStats playerStats;
     private Spawner[] spawners;
     private int destroyedSpawners;
+    private SoundManager soundManager;
 
     private void Awake()
     {
         playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         spawners = FindObjectsOfType<Spawner>();
     }
 
@@ -31,6 +32,9 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator SpawnEnemyWave()
     {
+        // Play new Wave sound
+        soundManager.PlayNewWaveSound();
+
         for(int i = 0; i < enemyAmount; ++i)
         {
             spawnEnemy();
@@ -58,6 +62,7 @@ public class GameManager : MonoBehaviour
         if (playerStats.isDead())
         {
             Debug.Log("You Lose! Player died!");
+            soundManager.PlayePlayerDeath();
             spawningEnemysEnded = true;
             EndGame();
         }
@@ -71,7 +76,6 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
-        gameEnded = true;
         StartCoroutine(SlowMotionEndGame());
     }
 
@@ -79,8 +83,9 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = slowdownFactor;
         Time.fixedDeltaTime = Time.timeScale * 0.02f;
-        yield return new WaitForSecondsRealtime(10);
+        yield return new WaitForSecondsRealtime(4);
         Time.timeScale = 0;
+        soundManager.StopAllAudioEffects();
     }
 
     // Damage enemy's HP by projectile damage amount
@@ -89,6 +94,7 @@ public class GameManager : MonoBehaviour
         EnemyStats enemyStats = other.gameObject.GetComponent<EnemyStats>();
 
         enemyStats.DamageEnemy(damage);
+        soundManager.PlayEnemyTakeDamageSound();
 
         Debug.Log(enemyStats.Health);
 
@@ -97,22 +103,13 @@ public class GameManager : MonoBehaviour
         {
             // Adds enemy XP to player total XP
             playerStats.AddExperience(enemyStats.ExperienceValue);
+            soundManager.PlayEnemyDeathSound();
             Destroy(other.gameObject);
 
             Debug.Log("Enemy died!");
             Debug.Log($"Player XP: {playerStats.Experience}");
             Debug.Log($"Player Level: {playerStats.PlayerLevel}");
         }
-    }
-
-    // Damage player's HP by projectile damage amount
-    public void DamagePlayer(Collision collision, int health)
-    {
-        EnemyStats enemyStats = collision.gameObject.GetComponent<EnemyStats>();
-
-        playerStats.DamagePlayer(enemyStats.Damage);
-
-        Debug.Log(playerStats.Health);
     }
 
     // Damage spawner's HP by projectile damage amount
