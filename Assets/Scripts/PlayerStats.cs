@@ -22,7 +22,7 @@ public class PlayerStats : MonoBehaviour
     }
 
     // Damage player's HP by projectile damage amount
-    public void Damage(int damage)
+    public void DamagePlayer(int damage)
     {
         if(health > 0)
         {
