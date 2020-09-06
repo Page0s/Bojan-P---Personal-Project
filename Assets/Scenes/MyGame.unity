@@ -1279,6 +1279,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: bf4fcf8ca3785ce46b7adbb9e798f04f, type: 3}
   - {fileID: 8300000, guid: cc0b31f8043b6854dbcba03f9e9f3ae8, type: 3}
   - {fileID: 8300000, guid: 73f75434beded40448638d8bc70ba0d2, type: 3}
+  enemyIdleClips:
+  - {fileID: 8300000, guid: f607f649de9166e46b76be5de6cf16b7, type: 3}
+  - {fileID: 8300000, guid: 9e20cd093bc087a4dbc8d1162c9de441, type: 3}
   newWaveSounds:
   - {fileID: 8300000, guid: 26fbf6bb6963666478f6992bc53b9145, type: 3}
   - {fileID: 8300000, guid: 618be86712ffac947997f96463301683, type: 3}
