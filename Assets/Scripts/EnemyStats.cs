@@ -14,13 +14,11 @@ public class EnemyStats : MonoBehaviour
     [SerializeField] private int experienceValue = 10;
 
     private SoundManager soundManager;
-    private AudioSource audioSource;
     private float counter;
 
     private void Awake()
     {
         counter = 4;
-        audioSource = GetComponent<AudioSource>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
     }
 
