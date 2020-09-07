@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     private float spawnAmount = 10f;
     private int destroyedSpawners;
     private int spawnersLeft = 4;
+    private int waveCounter;
     private bool spawningEnemysEnded = false;
     private bool gameIsActive;
     private PlayerStats playerStats;
@@ -28,9 +29,11 @@ public class GameManager : MonoBehaviour
     private TMP_Text spawnerText;
     private TMP_Text gameOverText;
     private TMP_Text enemyCounterText;
+    private TMP_Text waveText;
     private string originSpawnerText = "Spawners Left: ";
     private AudioSource playerAudioSource;
     private int enemyCounter;
+    private Coroutine spawnEnemysCoroutine;
 
     private void Awake()
     {
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviour
         spawnerText = GameObject.Find("SpawnerText").GetComponent<TMP_Text>();
         gameOverText = GameObject.Find("Game Over").GetComponent<TMP_Text>();
         enemyCounterText = GameObject.Find("EnemyText").GetComponent<TMP_Text>();
+        waveText = GameObject.Find("WaveText").GetComponent<TMP_Text>();
         spawners = FindObjectsOfType<Spawner>();
     }
 
@@ -58,13 +62,15 @@ public class GameManager : MonoBehaviour
         spawnAmount = difficultyAmount;
         playerAudioSource.Play();
         spawnerText.text = originSpawnerText + spawnersLeft.ToString();
-        StartCoroutine(SpawnEnemyWave());
+        spawnEnemysCoroutine = StartCoroutine(SpawnEnemyWave());
     }
 
     private IEnumerator SpawnEnemyWave()
     {
         // Play new Wave sound
         soundManager.PlayNewWaveSound();
+        ++waveCounter;
+        waveText.text = waveCounter.ToString();
 
         for(int i = 0; i < spawnAmount; ++i)
         {
@@ -72,6 +78,15 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenEnemySpawn);
         }
         spawningEnemysEnded = true;
+        Invoke("RestartWave", 10f);
+    }
+
+    private void RestartWave()
+    {
+        spawnAmount *= 1.5f;
+        spawnEnemysCoroutine = StartCoroutine(SpawnEnemyWave());
+        spawningEnemysEnded = false;
+        Debug.Log($"Starting {waveCounter} Wave!");
     }
 
     private void spawnEnemy()
@@ -87,7 +102,7 @@ public class GameManager : MonoBehaviour
         if (spawningEnemysEnded)
         {
             Debug.Log("Stop spawning enemys!");
-            StopCoroutine(SpawnEnemyWave());
+            StopCoroutine(spawnEnemysCoroutine);
         }
 
         if (playerStats.isDead())
