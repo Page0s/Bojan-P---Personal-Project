@@ -13,6 +13,28 @@ public class EnemyStats : MonoBehaviour
     [SerializeField] private int damage = 20;
     [SerializeField] private int experienceValue = 10;
 
+    private SoundManager soundManager;
+    private AudioSource audioSource;
+    private float counter;
+
+    private void Awake()
+    {
+        counter = 4;
+        audioSource = GetComponent<AudioSource>();
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
+    }
+
+    private void Update()
+    {
+        counter -= Time.deltaTime;
+
+        if(counter <= 0)
+        {
+            soundManager.PlayEnemyIdleSound();
+            counter = Random.Range(4, 12);
+        }
+    }
+
     // Damage enemy's HP by projectile damage amount
     public void DamageEnemy(int damage)
     {

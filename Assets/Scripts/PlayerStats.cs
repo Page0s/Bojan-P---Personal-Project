@@ -13,12 +13,17 @@ public class PlayerStats : MonoBehaviour
 
     [SerializeField] private int health = 100;
     [SerializeField] private int stamina = 100;
+    [SerializeField] private AudioClip levelUpSound;
+    [SerializeField] private ParticleSystem LevelUpParticles;
+
+    private AudioSource audioSource;
 
     private void Awake()
     {
         PlayerLevel = 1;
         MovementSpeed = 10f;
         SprintSpeedModifier = 1.5f;
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Damage player's HP by projectile damage amount
@@ -41,6 +46,8 @@ public class PlayerStats : MonoBehaviour
         {
             Experience -= 100;
             PlayerLevel += 1;
+            audioSource.PlayOneShot(levelUpSound, 1.5f);
+            LevelUpParticles.Play();
         }
     }
 }

@@ -6,7 +6,7 @@ public class ParticleGun : MonoBehaviour
 {
     public int Damage { get => damage; }
 
-    [SerializeField] private int damage = 50;
+    [SerializeField] private int damage = 10;
 
     private GameManager gameManager;
 
@@ -17,7 +17,7 @@ public class ParticleGun : MonoBehaviour
 
     private void OnParticleCollision(GameObject other)
     {
-        // If enemy layer collided with the object, damage the enemy by amount
+        // If enemy layer collided with the particle gun projectile, damage the enemy by amount
         if (other.gameObject.layer == 11)
         {
             gameManager.DamageEnemy(other, damage);
