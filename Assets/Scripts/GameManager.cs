@@ -2,47 +2,91 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+    public bool GameIsActive { get => gameIsActive; }
+
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private Transform[] spawnLocations;
     [SerializeField] private float timeBetweenEnemySpawn = 2f;
+    [SerializeField] Button restartButton;
 
-    private float enemyAmount = 5;
     private float slowdownFactor = 0.05f;
+    private float spawnAmount = 10f;
     private int destroyedSpawners;
+    private int spawnersLeft = 4;
+    private int waveCounter;
     private bool spawningEnemysEnded = false;
+    private bool gameIsActive;
     private PlayerStats playerStats;
     private Spawner[] spawners;
     private SoundManager soundManager;
     private ParticleGun particleGun;
+    private TMP_Text spawnerText;
+    private TMP_Text gameOverText;
+    private TMP_Text enemyCounterText;
+    private TMP_Text waveText;
+    private string originSpawnerText = "Spawners Left: ";
+    private AudioSource playerAudioSource;
+    private int enemyCounter;
+    private Coroutine spawnEnemysCoroutine;
 
     private void Awake()
     {
+        Time.timeScale = 1f;
+        Time.fixedDeltaTime = 0.02f;
         playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
+        playerAudioSource = GameObject.Find("Player").GetComponent<AudioSource>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         particleGun = GameObject.Find("Particle Gun").GetComponent<ParticleGun>();
+        spawnerText = GameObject.Find("SpawnerText").GetComponent<TMP_Text>();
+        gameOverText = GameObject.Find("Game Over").GetComponent<TMP_Text>();
+        enemyCounterText = GameObject.Find("EnemyText").GetComponent<TMP_Text>();
+        waveText = GameObject.Find("WaveText").GetComponent<TMP_Text>();
         spawners = FindObjectsOfType<Spawner>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(SpawnEnemyWave());
+
+    }
+
+    public void StartGame(int difficultyAmount)
+    {
+        gameIsActive = true;
+        spawnAmount = difficultyAmount;
+        playerAudioSource.Play();
+        spawnerText.text = originSpawnerText + spawnersLeft.ToString();
+        spawnEnemysCoroutine = StartCoroutine(SpawnEnemyWave());
     }
 
     private IEnumerator SpawnEnemyWave()
     {
         // Play new Wave sound
         soundManager.PlayNewWaveSound();
+        ++waveCounter;
+        waveText.text = waveCounter.ToString();
 
-        for(int i = 0; i < enemyAmount; ++i)
+        for(int i = 0; i < spawnAmount; ++i)
         {
             spawnEnemy();
             yield return new WaitForSeconds(timeBetweenEnemySpawn);
         }
         spawningEnemysEnded = true;
+        Invoke("RestartWave", 10f);
+    }
+
+    private void RestartWave()
+    {
+        spawnAmount *= 1.5f;
+        spawnEnemysCoroutine = StartCoroutine(SpawnEnemyWave());
+        spawningEnemysEnded = false;
+        Debug.Log($"Starting {waveCounter} Wave!");
     }
 
     private void spawnEnemy()
@@ -58,7 +102,7 @@ public class GameManager : MonoBehaviour
         if (spawningEnemysEnded)
         {
             Debug.Log("Stop spawning enemys!");
-            StopCoroutine(SpawnEnemyWave());
+            StopCoroutine(spawnEnemysCoroutine);
         }
 
         if (playerStats.isDead())
@@ -88,6 +132,13 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSecondsRealtime(4);
         Time.timeScale = 0;
         soundManager.StopAllAudioEffects();
+        gameOverText.enabled = true;
+        restartButton.gameObject.SetActive(true);
+    }
+
+    private void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // Damage enemy's HP by projectile damage amount
@@ -103,9 +154,11 @@ public class GameManager : MonoBehaviour
         // Enemy dies if HP is 0
         if (enemyStats.isDead())
         {
+            ++enemyCounter;
             // Adds enemy XP to player total XP
             playerStats.AddExperience(enemyStats.ExperienceValue);
             soundManager.PlayEnemyDeathSound();
+            enemyCounterText.text = enemyCounter.ToString();
             Destroy(other.gameObject);
 
             Debug.Log("Enemy died!");
@@ -128,6 +181,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Destroyed Spawners: " + destroyedSpawners);
             ++destroyedSpawners;
+            spawnerText.text = originSpawnerText + (spawnersLeft - destroyedSpawners).ToString();
             Debug.Log($"Destroyed Spawners: {destroyedSpawners}");
 
             playerStats.AddExperience(spawner.ExperienceValue);

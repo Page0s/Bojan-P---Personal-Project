@@ -19,7 +19,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 movement;
     private Rigidbody rigidbody;
     private ParticleSystem gunParticle;
-    private GameManager gameManager;
     private SoundManager soundManager;
     private PlayerStats playerStats;
     private AudioSource audioSource;
@@ -28,6 +27,8 @@ public class PlayerController : MonoBehaviour
     private bool oneBite;
     private float nextTimeToBite = 0f;
     private float biteRate = 3;
+    private PlayerHealth playerHealthBar;
+    private GameManager gameManager;
 
     // private Animator animator;
 
@@ -41,35 +42,44 @@ public class PlayerController : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         gunParticle = GameObject.Find("Particle Gun").GetComponent<ParticleSystem>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
+        playerHealthBar = GameObject.Find("HealthSlider").GetComponent<PlayerHealth>();
         // animator = GetComponent<Animator>();
     }
 
     private void FixedUpdate()
     {
-        // Store the input axes.
-        horizontal = Input.GetAxisRaw("Horizontal");
-        vertical = Input.GetAxisRaw("Vertical");
+        // True if game started
+        if (gameManager.GameIsActive)
+        {
+            // Store the input axes.
+            horizontal = Input.GetAxisRaw("Horizontal");
+            vertical = Input.GetAxisRaw("Vertical");
 
-        // Move the player around the scene.
-        Move();
+            // Move the player around the scene.
+            Move();
 
-        // Turn the player to face the mouse cursor.
-        Turning();
+            // Turn the player to face the mouse cursor.
+            Turning();
+        }
     }
 
     private void Update()
     {
-        // Fire gun left click
-        if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire)
+        // True if game started
+        if (gameManager.GameIsActive)
         {
-            nextTimeToFire = Time.time + 1f / fireRate;
-            gunParticle.Play();
-            audioSource.PlayOneShot(gunShoot, 0.5f);
-        }
-        if (enemyBite && Time.time >= nextTimeToBite)
-        {
-            nextTimeToBite = Time.time + 1f / biteRate;
-            oneBite = true;
+            // Fire gun left click
+            if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire)
+            {
+                nextTimeToFire = Time.time + 1f / fireRate;
+                gunParticle.Play();
+                audioSource.PlayOneShot(gunShoot, 0.5f);
+            }
+            if (enemyBite && Time.time >= nextTimeToBite)
+            {
+                nextTimeToBite = Time.time + 1f / biteRate;
+                oneBite = true;
+            }
         }
     }
 
@@ -131,6 +141,7 @@ public class PlayerController : MonoBehaviour
             {
                 EnemyStats enemyStats = collision.gameObject.GetComponent<EnemyStats>();
                 playerStats.DamagePlayer(enemyStats.Damage);
+                playerHealthBar.UpdateHealth(playerStats.Health);
                 soundManager.PlayPlayerTakeDamage();
                 Debug.Log(playerStats.Health);
                 oneBite = false;

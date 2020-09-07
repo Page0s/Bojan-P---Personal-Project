@@ -86,7 +86,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayNewWaveSound()
     {
-        newWaveAudioSource.PlayOneShot(newWaveSounds[Random.Range(0, newWaveSounds.Length)], 0.5f);
+        newWaveAudioSource.PlayOneShot(newWaveSounds[Random.Range(0, newWaveSounds.Length)], 0.2f);
     }
 
     public void PlayPlayerTakeDamage()
