@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
         footStept = GetComponent<FootStept>();
         gunParticle = GameObject.Find("Particle Gun").GetComponent<ParticleSystem>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
-        playerHealthBar = GameObject.Find("Slider").GetComponent<PlayerHealth>();
+        playerHealthBar = GameObject.Find("HealthSlider").GetComponent<PlayerHealth>();
         // animator = GetComponent<Animator>();
     }
 
