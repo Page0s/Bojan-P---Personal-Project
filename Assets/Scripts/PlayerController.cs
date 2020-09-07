@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private float nextTimeToBite = 0f;
     private float biteRate = 3;
     private PlayerHealth playerHealthBar;
+    private GameManager gameManager;
 
     // private Animator animator;
 
@@ -38,6 +39,7 @@ public class PlayerController : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
         audioSource = GetComponent<AudioSource>();
         footStept = GetComponent<FootStept>();
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         gunParticle = GameObject.Find("Particle Gun").GetComponent<ParticleSystem>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         playerHealthBar = GameObject.Find("HealthSlider").GetComponent<PlayerHealth>();
@@ -46,30 +48,38 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Store the input axes.
-        horizontal = Input.GetAxisRaw("Horizontal");
-        vertical = Input.GetAxisRaw("Vertical");
+        // True if game started
+        if (gameManager.GameIsActive)
+        {
+            // Store the input axes.
+            horizontal = Input.GetAxisRaw("Horizontal");
+            vertical = Input.GetAxisRaw("Vertical");
 
-        // Move the player around the scene.
-        Move();
+            // Move the player around the scene.
+            Move();
 
-        // Turn the player to face the mouse cursor.
-        Turning();
+            // Turn the player to face the mouse cursor.
+            Turning();
+        }
     }
 
     private void Update()
     {
-        // Fire gun left click
-        if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire)
+        // True if game started
+        if (gameManager.GameIsActive)
         {
-            nextTimeToFire = Time.time + 1f / fireRate;
-            gunParticle.Play();
-            audioSource.PlayOneShot(gunShoot, 0.5f);
-        }
-        if (enemyBite && Time.time >= nextTimeToBite)
-        {
-            nextTimeToBite = Time.time + 1f / biteRate;
-            oneBite = true;
+            // Fire gun left click
+            if (Input.GetMouseButton(0) && Time.time >= nextTimeToFire)
+            {
+                nextTimeToFire = Time.time + 1f / fireRate;
+                gunParticle.Play();
+                audioSource.PlayOneShot(gunShoot, 0.5f);
+            }
+            if (enemyBite && Time.time >= nextTimeToBite)
+            {
+                nextTimeToBite = Time.time + 1f / biteRate;
+                oneBite = true;
+            }
         }
     }
 
