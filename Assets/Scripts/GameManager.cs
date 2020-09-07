@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,23 +13,28 @@ public class GameManager : MonoBehaviour
     private float enemyAmount = 5;
     private float slowdownFactor = 0.05f;
     private int destroyedSpawners;
+    private int spawnersLeft = 4;
     private bool spawningEnemysEnded = false;
     private PlayerStats playerStats;
     private Spawner[] spawners;
     private SoundManager soundManager;
     private ParticleGun particleGun;
+    private TMP_Text spawnerText;
+    private string originSpawnerText = "Spawners Left: ";
 
     private void Awake()
     {
         playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         particleGun = GameObject.Find("Particle Gun").GetComponent<ParticleGun>();
+        spawnerText = GameObject.Find("SpawnerText").GetComponent<TMP_Text>();
         spawners = FindObjectsOfType<Spawner>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        spawnerText.text = originSpawnerText + spawnersLeft.ToString();
         StartCoroutine(SpawnEnemyWave());
     }
 
@@ -128,6 +134,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Destroyed Spawners: " + destroyedSpawners);
             ++destroyedSpawners;
+            spawnerText.text = originSpawnerText + (spawnersLeft - destroyedSpawners).ToString();
             Debug.Log($"Destroyed Spawners: {destroyedSpawners}");
 
             playerStats.AddExperience(spawner.ExperienceValue);
