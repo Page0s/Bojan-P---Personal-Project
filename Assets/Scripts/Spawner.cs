@@ -8,7 +8,7 @@ public class Spawner : MonoBehaviour
     public int ExperienceValue { get => experienceValue; }
 
     [SerializeField] private int health = 500;
-    [SerializeField] private int experienceValue = 100;
+    [SerializeField] private int experienceValue = 110;
 
     public void DamageSpawner(int damage)
     {
