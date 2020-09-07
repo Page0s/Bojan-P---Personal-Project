@@ -19,7 +19,6 @@ public class PlayerController : MonoBehaviour
     private Vector3 movement;
     private Rigidbody rigidbody;
     private ParticleSystem gunParticle;
-    private GameManager gameManager;
     private SoundManager soundManager;
     private PlayerStats playerStats;
     private AudioSource audioSource;
@@ -28,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private bool oneBite;
     private float nextTimeToBite = 0f;
     private float biteRate = 3;
+    private PlayerHealth playerHealthBar;
 
     // private Animator animator;
 
@@ -38,9 +38,9 @@ public class PlayerController : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
         audioSource = GetComponent<AudioSource>();
         footStept = GetComponent<FootStept>();
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         gunParticle = GameObject.Find("Particle Gun").GetComponent<ParticleSystem>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
+        playerHealthBar = GameObject.Find("Slider").GetComponent<PlayerHealth>();
         // animator = GetComponent<Animator>();
     }
 
@@ -131,6 +131,7 @@ public class PlayerController : MonoBehaviour
             {
                 EnemyStats enemyStats = collision.gameObject.GetComponent<EnemyStats>();
                 playerStats.DamagePlayer(enemyStats.Damage);
+                playerHealthBar.UpdateHealth(playerStats.Health);
                 soundManager.PlayPlayerTakeDamage();
                 Debug.Log(playerStats.Health);
                 oneBite = false;
