@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -17,6 +18,8 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private ParticleSystem LevelUpParticles;
 
     private AudioSource audioSource;
+    private TMP_Text levelText;
+    private ExperienceBar experienceBar;
 
     private void Awake()
     {
@@ -24,6 +27,8 @@ public class PlayerStats : MonoBehaviour
         MovementSpeed = 5f;
         SprintSpeedModifier = 1.5f;
         audioSource = GetComponent<AudioSource>();
+        levelText = GameObject.Find("LevelText").GetComponent<TMP_Text>();
+        experienceBar = GameObject.Find("ExperienceSlider").GetComponent<ExperienceBar>();
     }
 
     // Damage player's HP by projectile damage amount
@@ -40,14 +45,17 @@ public class PlayerStats : MonoBehaviour
     public void AddExperience(int amount)
     {
         Experience += amount;
+        experienceBar.UpdateExperience(Experience);
 
         // DING!!!
-        if(Experience >= 100)
+        if (Experience >= 100)
         {
             Experience -= 100;
             PlayerLevel += 1;
             audioSource.PlayOneShot(levelUpSound, 1.5f);
             LevelUpParticles.Play();
+            levelText.text = PlayerLevel.ToString();
+            experienceBar.UpdateExperience(Experience);
         }
     }
 }
