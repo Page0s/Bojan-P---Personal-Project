@@ -11,16 +11,18 @@ public class GameManager : MonoBehaviour
 
     private float enemyAmount = 5;
     private float slowdownFactor = 0.05f;
+    private int destroyedSpawners;
     private bool spawningEnemysEnded = false;
     private PlayerStats playerStats;
     private Spawner[] spawners;
-    private int destroyedSpawners;
     private SoundManager soundManager;
+    private ParticleGun particleGun;
 
     private void Awake()
     {
         playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
+        particleGun = GameObject.Find("Particle Gun").GetComponent<ParticleGun>();
         spawners = FindObjectsOfType<Spawner>();
     }
 
@@ -143,16 +145,18 @@ public class GameManager : MonoBehaviour
         {
             case 1:
                 Debug.Log($"Player was moving with speed: {playerStats.MovementSpeed}");
-                playerStats.MovementSpeed = 20;
+                playerStats.MovementSpeed += 1;
                 Debug.Log($"Current player movement speed: {playerStats.MovementSpeed}");
                 break;
             case 2:
                 Debug.Log($"Player spring speed modifier: {playerStats.SprintSpeedModifier}");
-                playerStats.SprintSpeedModifier = 2f;
+                playerStats.SprintSpeedModifier += 0.1f;
                 Debug.Log($"Current player sprint movement modifier: {playerStats.SprintSpeedModifier}");
                 break;
             case 3:
-                Debug.Log($"Player wepon damage: ");
+                Debug.Log($"Player wepon damage: {particleGun.Damage}");
+                particleGun.Damage += 10;
+                Debug.Log($"Player wepon damage: {particleGun.Damage}");
                 break;
             default:
                 break;

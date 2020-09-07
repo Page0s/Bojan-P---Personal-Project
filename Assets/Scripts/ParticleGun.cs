@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ParticleGun : MonoBehaviour
 {
-    public int Damage { get => damage; }
+    public int Damage { get => damage; set => damage = value; }
 
     [SerializeField] private int damage = 10;
 

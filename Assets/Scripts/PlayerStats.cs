@@ -21,7 +21,7 @@ public class PlayerStats : MonoBehaviour
     private void Awake()
     {
         PlayerLevel = 1;
-        MovementSpeed = 10f;
+        MovementSpeed = 5f;
         SprintSpeedModifier = 1.5f;
         audioSource = GetComponent<AudioSource>();
     }
