@@ -56,13 +56,13 @@ public class SoundManager : MonoBehaviour
 
         if (playPlayerTakeDamgeSound)
         {
-            playerAudioSource.PlayOneShot(RandomClip(playerTakeDamageClips), 0.7f);
+            playerAudioSource.PlayOneShot(RandomClip(playerTakeDamageClips), 0.9f);
             playPlayerTakeDamgeSound = false;
         }
 
         if (playPlayerDeathSound)
         {
-            playerAudioSource.PlayOneShot(RandomClip(playerDeathClips), 0.09f);
+            playerAudioSource.PlayOneShot(RandomClip(playerDeathClips), 0.2f);
             playPlayerTakeDamgeSound = false;
             playPlayerDeathSound = false;
         }
