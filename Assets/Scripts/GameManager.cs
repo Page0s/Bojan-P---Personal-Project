@@ -157,6 +157,15 @@ public class GameManager : MonoBehaviour
     // First slow then stop time
     private IEnumerator SlowMotionEndGame()
     {
+        //Disable all ability buttons on win
+        Button[] buttons = FindObjectsOfType<Button>();
+
+        foreach (Button button in buttons)
+        {
+            if (button.gameObject.CompareTag("AbilityModiffier"))
+                button.gameObject.SetActive(false);
+        }
+        // Slow time
         Time.timeScale = slowdownFactor;
         Time.fixedDeltaTime = Time.timeScale * 0.02f;
         yield return new WaitForSecondsRealtime(4);
@@ -184,6 +193,9 @@ public class GameManager : MonoBehaviour
         if (enemyStats.isDead())
         {
             ++enemyCounter;
+            // Play player sound every 10 kills
+            if (enemyCounter % 10 == 0)
+                soundManager.PlayThenthKillSound();
             // Adds enemy XP to player total XP
             playerStats.AddExperience(enemyStats.ExperienceValue);
             soundManager.PlayEnemyDeathSound();
