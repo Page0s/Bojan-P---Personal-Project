@@ -24,12 +24,17 @@ public class GameManager : MonoBehaviour
     private bool spawningEnemysEnded = false;
     private bool gameIsActive;
     private PlayerStats playerStats;
+    private PlayerController playerController;
     private SoundManager soundManager;
     private ParticleGun particleGun;
     private TMP_Text spawnerText;
     private TMP_Text gameOverText;
     private TMP_Text enemyCounterText;
     private TMP_Text waveText;
+    private TMP_Text playerSpeedText;
+    private TMP_Text weaponRateOfFireText;
+    private TMP_Text weaponDamageText;
+    private TMP_Text youWinText;
     private string originSpawnerText = "Spawners Left: ";
     private AudioSource playerAudioSource;
     private int enemyCounter;
@@ -43,12 +48,17 @@ public class GameManager : MonoBehaviour
         Time.fixedDeltaTime = 0.02f;
         playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
         playerAudioSource = GameObject.Find("Player").GetComponent<AudioSource>();
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         particleGun = GameObject.Find("Particle Gun").GetComponent<ParticleGun>();
         spawnerText = GameObject.Find("SpawnerText").GetComponent<TMP_Text>();
         gameOverText = GameObject.Find("Game Over").GetComponent<TMP_Text>();
+        youWinText = GameObject.Find("YouWin").GetComponent<TMP_Text>();
         enemyCounterText = GameObject.Find("EnemyText").GetComponent<TMP_Text>();
         waveText = GameObject.Find("WaveText").GetComponent<TMP_Text>();
+        playerSpeedText = GameObject.Find("PlayerSpeed").GetComponent<TMP_Text>();
+        weaponRateOfFireText = GameObject.Find("WeaponRateOfFire").GetComponent<TMP_Text>();
+        weaponDamageText = GameObject.Find("WeaponDamage").GetComponent<TMP_Text>();
         spawners = FindObjectsOfType<Spawner>();
         spawnerNames = new List<Transform>();
     }
@@ -60,11 +70,14 @@ public class GameManager : MonoBehaviour
             spawnerNames.Add(spawnLocations[i]);
     }
 
-    public void StartGame(int difficultyAmount, int gunDamage)
+    // Set the game difficulty based on selection
+    public void StartGame(int spawnInFirstWave, int gunDamage, float movementSpeed, float rateOfFire)
     {
         gameIsActive = true;
-        spawnAmount = difficultyAmount;
+        spawnAmount = spawnInFirstWave;
         particleGun.Damage = gunDamage;
+        playerStats.MovementSpeed = movementSpeed;
+        playerController.FireRate = rateOfFire;
         playerAudioSource.Play();
         spawnerText.text = originSpawnerText + spawnersLeft.ToString();
         spawnEnemysCoroutine = StartCoroutine(SpawnEnemyWave());
@@ -105,6 +118,13 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Update player stats ingame
+        if (gameIsActive)
+        {
+            playerSpeedText.text = playerStats.MovementSpeed.ToString("n1");
+            weaponRateOfFireText.text = playerController.FireRate.ToString("n2");
+            weaponDamageText.text = particleGun.Damage.ToString();
+        }
         // Stop the game when endGame == true
         if (spawningEnemysEnded)
         {
@@ -115,14 +135,17 @@ public class GameManager : MonoBehaviour
         if (playerStats.isDead())
         {
             Debug.Log("You Lose! Player died!");
+            playerController.PlayPlayerDeathAnimation();
             soundManager.PlayePlayerDeath();
             spawningEnemysEnded = true;
+            gameOverText.enabled = true;
             EndGame();
         }
         else if(destroyedSpawners == spawners.Length)
         {
             Debug.Log("You Win! All spawners destroyed!");
             spawningEnemysEnded = true;
+            youWinText.enabled = true;
             EndGame();
         }
     }
@@ -131,15 +154,23 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(SlowMotionEndGame());
     }
-
+    // First slow then stop time
     private IEnumerator SlowMotionEndGame()
     {
+        //Disable all ability buttons on win
+        Button[] buttons = FindObjectsOfType<Button>();
+
+        foreach (Button button in buttons)
+        {
+            if (button.gameObject.CompareTag("AbilityModiffier"))
+                button.gameObject.SetActive(false);
+        }
+        // Slow time
         Time.timeScale = slowdownFactor;
         Time.fixedDeltaTime = Time.timeScale * 0.02f;
         yield return new WaitForSecondsRealtime(4);
         Time.timeScale = 0;
         soundManager.StopAllAudioEffects();
-        gameOverText.enabled = true;
         restartButton.gameObject.SetActive(true);
     }
 
@@ -162,6 +193,9 @@ public class GameManager : MonoBehaviour
         if (enemyStats.isDead())
         {
             ++enemyCounter;
+            // Play player sound every 10 kills
+            if (enemyCounter % 10 == 0)
+                soundManager.PlayThenthKillSound();
             // Adds enemy XP to player total XP
             playerStats.AddExperience(enemyStats.ExperienceValue);
             soundManager.PlayEnemyDeathSound();
@@ -217,24 +251,24 @@ public class GameManager : MonoBehaviour
         }
         return 0;
     }
-
+    // Modify Player starts based on Ability Button input
     public void ModifyAbility(int abilityIndex)
     {
         switch (abilityIndex)
         {
             case 1:
                 Debug.Log($"Player was moving with speed: {playerStats.MovementSpeed}");
-                playerStats.MovementSpeed += 1;
+                playerStats.MovementSpeed += 0.1f;
                 Debug.Log($"Current player movement speed: {playerStats.MovementSpeed}");
                 break;
             case 2:
-                Debug.Log($"Player spring speed modifier: {playerStats.SprintSpeedModifier}");
-                playerStats.SprintSpeedModifier += 0.1f;
-                Debug.Log($"Current player sprint movement modifier: {playerStats.SprintSpeedModifier}");
+                Debug.Log($"Players rate of fire: {playerController.FireRate}");
+                playerController.FireRate += 0.05f;
+                Debug.Log($"Current player sprint movement modifier: {playerController.FireRate}");
                 break;
             case 3:
                 Debug.Log($"Player wepon damage: {particleGun.Damage}");
-                particleGun.Damage += 10;
+                particleGun.Damage += 5;
                 Debug.Log($"Player wepon damage: {particleGun.Damage}");
                 break;
             default:
