@@ -136,13 +136,15 @@ public class PlayerController : MonoBehaviour
         {
             enemyBite = true;
 
-            // Damage player's HP by projectile damage amount
+            // Damage player's HP by damage amount
             if (enemyBite && oneBite)
             {
                 EnemyStats enemyStats = collision.gameObject.GetComponent<EnemyStats>();
                 playerStats.DamagePlayer(enemyStats.Damage);
                 playerHealthBar.UpdateHealth(playerStats.Health);
                 soundManager.PlayPlayerTakeDamage();
+                enemyStats.HitPlayerAnimation();
+
                 Debug.Log(playerStats.Health);
                 oneBite = false;
                 enemyBite = false;

@@ -10,6 +10,7 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip[] enemyDeathClips;
     [SerializeField] private AudioClip[] enemyIdleClips;
     [SerializeField] private AudioClip[] newWaveSounds;
+    [SerializeField] private AudioClip spawnerHitSound;
 
     [SerializeField] private AudioSource newWaveAudioSource;
     [SerializeField] private AudioSource playerAudioSource;
@@ -21,6 +22,7 @@ public class SoundManager : MonoBehaviour
     private bool playEnemyDeathSound;
     private bool playPlayerTakeDamgeSound = false;
     private bool playPlayerDeathSound;
+    private bool spawnerTakeDanage;
 
     internal void PlayEnemyIdleSound()
     {
@@ -43,7 +45,7 @@ public class SoundManager : MonoBehaviour
                 nextTimeToPlaySound = Time.time + 1f / soundRepeatRate;
                 audioSource.PlayOneShot(RandomClip(enemyTakeDamageClips), 0.5f);
                 playEnemyTakeDamgeSound = false;
-            }       
+            }
         }
 
         if (playEnemyDeathSound)
@@ -56,7 +58,7 @@ public class SoundManager : MonoBehaviour
 
         if (playPlayerTakeDamgeSound)
         {
-            playerAudioSource.PlayOneShot(RandomClip(playerTakeDamageClips), 0.9f);
+            playerAudioSource.PlayOneShot(RandomClip(playerTakeDamageClips), 1.3f);
             playPlayerTakeDamgeSound = false;
         }
 
@@ -65,6 +67,11 @@ public class SoundManager : MonoBehaviour
             playerAudioSource.PlayOneShot(RandomClip(playerDeathClips), 0.2f);
             playPlayerTakeDamgeSound = false;
             playPlayerDeathSound = false;
+        }
+        if (spawnerTakeDanage)
+        {
+            audioSource.PlayOneShot(spawnerHitSound, 0.2f);
+            spawnerTakeDanage = false;
         }
     }
 
@@ -103,5 +110,10 @@ public class SoundManager : MonoBehaviour
     {
         playerAudioSource.Stop();
         audioSource.Stop();
+    }
+
+    public void PlaySpawnerTakeDamage()
+    {
+        spawnerTakeDanage = true;
     }
 }

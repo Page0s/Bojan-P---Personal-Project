@@ -15,11 +15,13 @@ public class EnemyStats : MonoBehaviour
 
     private SoundManager soundManager;
     private float counter;
+    private Animator animator;
 
     private void Awake()
     {
         counter = 4;
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
@@ -43,4 +45,9 @@ public class EnemyStats : MonoBehaviour
     }
 
     public bool isDead() => health <= 0;
+
+    public void HitPlayerAnimation()
+    {
+        animator.SetTrigger("hitPlayer");
+    }
 }
