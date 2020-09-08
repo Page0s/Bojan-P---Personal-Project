@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
             spawnerNames.Add(spawnLocations[i]);
     }
 
+    // Set the game difficulty based on selection
     public void StartGame(int spawnInFirstWave, int gunDamage, float movementSpeed, float rateOfFire)
     {
         gameIsActive = true;
@@ -115,6 +116,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Update player stats ingame
         if (gameIsActive)
         {
             playerSpeedText.text = playerStats.MovementSpeed.ToString();
@@ -148,7 +150,7 @@ public class GameManager : MonoBehaviour
     {
         StartCoroutine(SlowMotionEndGame());
     }
-
+    // First slow then stop time
     private IEnumerator SlowMotionEndGame()
     {
         Time.timeScale = slowdownFactor;
@@ -251,7 +253,7 @@ public class GameManager : MonoBehaviour
                 break;
             case 3:
                 Debug.Log($"Player wepon damage: {particleGun.Damage}");
-                particleGun.Damage += 10;
+                particleGun.Damage += 5;
                 Debug.Log($"Player wepon damage: {particleGun.Damage}");
                 break;
             default:
