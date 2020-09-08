@@ -29,8 +29,7 @@ public class PlayerController : MonoBehaviour
     private float biteRate = 3;
     private PlayerHealth playerHealthBar;
     private GameManager gameManager;
-
-    // private Animator animator;
+    private Animator animator;
 
     private void Awake()
     {
@@ -43,7 +42,7 @@ public class PlayerController : MonoBehaviour
         gunParticle = GameObject.Find("Particle Gun").GetComponent<ParticleSystem>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         playerHealthBar = GameObject.Find("HealthSlider").GetComponent<PlayerHealth>();
-        // animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
     }
 
     private void FixedUpdate()
@@ -74,12 +73,14 @@ public class PlayerController : MonoBehaviour
                 nextTimeToFire = Time.time + 1f / fireRate;
                 gunParticle.Play();
                 audioSource.PlayOneShot(gunShoot, 0.5f);
+                animator.SetBool("isShooting", true);
             }
             if (enemyBite && Time.time >= nextTimeToBite)
             {
                 nextTimeToBite = Time.time + 1f / biteRate;
                 oneBite = true;
             }
+            animator.SetBool("isShooting", false);
         }
     }
 
@@ -110,16 +111,20 @@ public class PlayerController : MonoBehaviour
             footStept.IsSprinting();
             movement = movement.normalized * (playerStats.MovementSpeed * playerStats.SprintSpeedModifier) * Time.deltaTime;
             rigidbody.MovePosition(transform.position + movement);
+            animator.SetFloat("animSpeed", 2.8f);
         }
         else if(IsWalking())
         {
             // Move the player to it's current position plus the movement.
             footStept.NotSprinting();
             rigidbody.MovePosition(transform.position + movement);
+            animator.SetBool("isWalking", true);
+            animator.SetFloat("animSpeed", 1f);
         }
         else
         {
             rigidbody.angularVelocity = Vector3.zero;
+            animator.SetBool("isWalking", false);
         }
     }
 
@@ -150,5 +155,9 @@ public class PlayerController : MonoBehaviour
                 enemyBite = false;
             }
         }
+    }
+    public void PlayPlayerDeathAnimation()
+    {
+        animator.SetTrigger("isDead");
     }
 }
