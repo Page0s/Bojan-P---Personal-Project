@@ -56,10 +56,11 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void StartGame(int difficultyAmount)
+    public void StartGame(int difficultyAmount, int gunDamage)
     {
         gameIsActive = true;
         spawnAmount = difficultyAmount;
+        particleGun.Damage = gunDamage;
         playerAudioSource.Play();
         spawnerText.text = originSpawnerText + spawnersLeft.ToString();
         spawnEnemysCoroutine = StartCoroutine(SpawnEnemyWave());
