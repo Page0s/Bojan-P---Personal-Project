@@ -5,6 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,7 +24,6 @@ public class GameManager : MonoBehaviour
     private bool spawningEnemysEnded = false;
     private bool gameIsActive;
     private PlayerStats playerStats;
-    private Spawner[] spawners;
     private SoundManager soundManager;
     private ParticleGun particleGun;
     private TMP_Text spawnerText;
@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
     private AudioSource playerAudioSource;
     private int enemyCounter;
     private Coroutine spawnEnemysCoroutine;
+    private Spawner[] spawners;
+    private List<Transform> spawnerNames;
 
     private void Awake()
     {
@@ -48,18 +50,21 @@ public class GameManager : MonoBehaviour
         enemyCounterText = GameObject.Find("EnemyText").GetComponent<TMP_Text>();
         waveText = GameObject.Find("WaveText").GetComponent<TMP_Text>();
         spawners = FindObjectsOfType<Spawner>();
+        spawnerNames = new List<Transform>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        for (int i = 0; i < spawnLocations.Length; ++i)
+            spawnerNames.Add(spawnLocations[i]);
     }
 
-    public void StartGame(int difficultyAmount)
+    public void StartGame(int difficultyAmount, int gunDamage)
     {
         gameIsActive = true;
         spawnAmount = difficultyAmount;
+        particleGun.Damage = gunDamage;
         playerAudioSource.Play();
         spawnerText.text = originSpawnerText + spawnersLeft.ToString();
         spawnEnemysCoroutine = StartCoroutine(SpawnEnemyWave());
@@ -89,9 +94,11 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Starting {waveCounter} Wave!");
     }
 
+    // Finds next available spawn location for enemys
     private void spawnEnemy()
     {
-        Transform spawnLocation = spawnLocations[UnityEngine.Random.Range(0, spawnLocations.Length)];
+        Transform spawnLocation = spawnerNames.ElementAt(UnityEngine.Random.Range(0, spawnerNames.Count));
+
         Instantiate(enemyPrefab, spawnLocation.position, spawnLocation.rotation);
     }
 
@@ -180,10 +187,16 @@ public class GameManager : MonoBehaviour
         if (spawner.isDead())
         {
             Debug.Log("Destroyed Spawners: " + destroyedSpawners);
+
             ++destroyedSpawners;
             spawnerText.text = originSpawnerText + (spawnersLeft - destroyedSpawners).ToString();
-            Debug.Log($"Destroyed Spawners: {destroyedSpawners}");
 
+            Debug.Log($"Destroyed {spawner.gameObject.name} Spawner!");
+            Debug.Log($"Destroyed Spawners: {destroyedSpawners}");
+            // remove spawner from spawner locations
+            spawnerNames.RemoveAt(FindIndex(spawner.gameObject.name));
+           
+            // add XP to playr from spawner
             playerStats.AddExperience(spawner.ExperienceValue);
             other.SetActive(false);
 
@@ -191,6 +204,17 @@ public class GameManager : MonoBehaviour
             Debug.Log($"Player XP: {playerStats.Experience}");
             Debug.Log($"Player Level: {playerStats.PlayerLevel}");
         }
+    }
+
+    // finds the destroyed spawner and remove it from the spawner location list
+    private int FindIndex(string spawnerName)
+    {
+        foreach(Transform transformSpawner in spawnerNames)
+        {
+            if (transformSpawner.gameObject.name == spawnerName)
+                return spawnerNames.IndexOf(transformSpawner);
+        }
+        return 0;
     }
 
     public void ModifyAbility(int abilityIndex)
