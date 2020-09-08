@@ -180,6 +180,7 @@ public class GameManager : MonoBehaviour
         Spawner spawner = other.gameObject.GetComponent<Spawner>();
 
         spawner.DamageSpawner(damage);
+        soundManager.PlaySpawnerTakeDamage();
 
         Debug.Log($"Spawner HP: {spawner.Health}");
 
