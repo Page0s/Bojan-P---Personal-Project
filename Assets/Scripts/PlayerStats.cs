@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class PlayerStats : MonoBehaviour
     public int PlayerLevel { get; private set; }
     public float SprintSpeedModifier { get; set; }
     public float MovementSpeed { get; set; }
+    public bool AbilityButtonVissible { get; set; }
 
     [SerializeField] private int health = 100;
     [SerializeField] private int stamina = 100;
@@ -20,6 +22,7 @@ public class PlayerStats : MonoBehaviour
     private AudioSource audioSource;
     private TMP_Text levelText;
     private ExperienceBar experienceBar;
+    private Coroutine abilityButtons;
 
     private void Awake()
     {
@@ -56,6 +59,37 @@ public class PlayerStats : MonoBehaviour
             LevelUpParticles.Play();
             levelText.text = PlayerLevel.ToString();
             experienceBar.UpdateExperience(Experience);
+            // Ability Selection
+            StopTimeAbilitySelection();
+        }
+    }
+
+    private void StopTimeAbilitySelection()
+    {
+        // First show abulity buttons
+        AbilityButtonVissible = true;
+
+        Button[] buttons = Resources.FindObjectsOfTypeAll<Button>();
+        foreach (Button button in buttons)
+        {
+            Debug.Log($"Button name: {button.name}");
+            if (button.gameObject.CompareTag("AbilityModiffier"))
+                button.gameObject.SetActive(true);
+        }
+        // Second Stop time
+        Time.timeScale = 0f;
+        // Wait button selection
+        abilityButtons = StartCoroutine(AbilitySelection());
+        StopCoroutine(abilityButtons);
+    }
+
+    private IEnumerator AbilitySelection()
+    {
+        while (true)
+        {
+            // wait untill player press the ability button
+            if (!AbilityButtonVissible) break;
+            yield return null;
         }
     }
 }

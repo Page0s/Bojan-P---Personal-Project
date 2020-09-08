@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 public class DifficultyButton : MonoBehaviour
 {
-    [SerializeField] private int difficultyIndex;
+    [SerializeField] private int SpawnInFirstWave;
     [SerializeField] private int gunDamage;
+    [SerializeField] private float movementSpeed;
+    [SerializeField] private float rateOfFire;
 
     private Button button;
     private GameManager gameManager;
@@ -22,7 +24,7 @@ public class DifficultyButton : MonoBehaviour
     private void SetDifficulty()
     {
         Debug.Log($"{button.gameObject.name} button was clicked");
-        gameManager.StartGame(difficultyIndex, gunDamage);
+        gameManager.StartGame(SpawnInFirstWave, gunDamage, movementSpeed, rateOfFire);
 
         Button[] buttons = FindObjectsOfType<Button>();
 
