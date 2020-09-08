@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 8716958992859112864}
   - component: {fileID: 4129687900372527843}
   m_Layer: 11
-  m_Name: Enemy 1
+  m_Name: Enemy
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -548,7 +548,7 @@ PrefabInstance:
     - target: {fileID: 9500000, guid: f227b5017a7c0184a96c2c26f1e4408d, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: b9ebd79951760e64e8f0890c302920a7, type: 2}
+      objectReference: {fileID: 9100000, guid: 324e99b4fe1acdc45a53334075197c9d, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f227b5017a7c0184a96c2c26f1e4408d, type: 3}
 --- !u!1 &3800167682933691069 stripped

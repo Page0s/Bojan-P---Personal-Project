@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     private bool spawningEnemysEnded = false;
     private bool gameIsActive;
     private PlayerStats playerStats;
+    private PlayerController playerController;
     private SoundManager soundManager;
     private ParticleGun particleGun;
     private TMP_Text spawnerText;
@@ -43,6 +44,7 @@ public class GameManager : MonoBehaviour
         Time.fixedDeltaTime = 0.02f;
         playerStats = GameObject.Find("Player").GetComponent<PlayerStats>();
         playerAudioSource = GameObject.Find("Player").GetComponent<AudioSource>();
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         particleGun = GameObject.Find("Particle Gun").GetComponent<ParticleGun>();
         spawnerText = GameObject.Find("SpawnerText").GetComponent<TMP_Text>();
@@ -115,6 +117,7 @@ public class GameManager : MonoBehaviour
         if (playerStats.isDead())
         {
             Debug.Log("You Lose! Player died!");
+            playerController.PlayPlayerDeathAnimation();
             soundManager.PlayePlayerDeath();
             spawningEnemysEnded = true;
             EndGame();
