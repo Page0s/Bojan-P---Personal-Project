@@ -11,7 +11,9 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClip[] enemyIdleClips;
     [SerializeField] private AudioClip[] newWaveSounds;
     [SerializeField] private AudioClip spawnerHitSound;
+    [SerializeField] private AudioClip[] thenthKillSounds;
 
+    [SerializeField] private AudioSource audioSourceMumble;
     [SerializeField] private AudioSource newWaveAudioSource;
     [SerializeField] private AudioSource playerAudioSource;
 
@@ -115,5 +117,10 @@ public class SoundManager : MonoBehaviour
     public void PlaySpawnerTakeDamage()
     {
         spawnerTakeDanage = true;
+    }
+
+    internal void PlayThenthKillSound()
+    {
+        audioSourceMumble.PlayOneShot(thenthKillSounds[Random.Range(0, thenthKillSounds.Length)]);
     }
 }
