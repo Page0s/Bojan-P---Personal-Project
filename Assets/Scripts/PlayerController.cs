@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public float FireRate { get => fireRate; set => fireRate = value; }
+
     [SerializeField] private float mouseSensitivity = 100f;
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private Camera camera;
@@ -89,7 +91,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out hit, camRayLength, floorMask))
+        if (Physics.Raycast(ray, out hit, camRayLength, floorMask) && !playerStats.isDead())
         {
             Vector3 playerToMouse = hit.point - transform.position;
             playerToMouse.y = 0f;
