@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     private TMP_Text playerSpeedText;
     private TMP_Text weaponRateOfFireText;
     private TMP_Text weaponDamageText;
+    private TMP_Text youWinText;
     private string originSpawnerText = "Spawners Left: ";
     private AudioSource playerAudioSource;
     private int enemyCounter;
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
         particleGun = GameObject.Find("Particle Gun").GetComponent<ParticleGun>();
         spawnerText = GameObject.Find("SpawnerText").GetComponent<TMP_Text>();
         gameOverText = GameObject.Find("Game Over").GetComponent<TMP_Text>();
+        youWinText = GameObject.Find("YouWin").GetComponent<TMP_Text>();
         enemyCounterText = GameObject.Find("EnemyText").GetComponent<TMP_Text>();
         waveText = GameObject.Find("WaveText").GetComponent<TMP_Text>();
         playerSpeedText = GameObject.Find("PlayerSpeed").GetComponent<TMP_Text>();
@@ -119,8 +121,8 @@ public class GameManager : MonoBehaviour
         // Update player stats ingame
         if (gameIsActive)
         {
-            playerSpeedText.text = playerStats.MovementSpeed.ToString();
-            weaponRateOfFireText.text = playerController.FireRate.ToString();
+            playerSpeedText.text = playerStats.MovementSpeed.ToString("n1");
+            weaponRateOfFireText.text = playerController.FireRate.ToString("n2");
             weaponDamageText.text = particleGun.Damage.ToString();
         }
         // Stop the game when endGame == true
@@ -136,12 +138,14 @@ public class GameManager : MonoBehaviour
             playerController.PlayPlayerDeathAnimation();
             soundManager.PlayePlayerDeath();
             spawningEnemysEnded = true;
+            gameOverText.enabled = true;
             EndGame();
         }
         else if(destroyedSpawners == spawners.Length)
         {
             Debug.Log("You Win! All spawners destroyed!");
             spawningEnemysEnded = true;
+            youWinText.enabled = true;
             EndGame();
         }
     }
@@ -153,12 +157,20 @@ public class GameManager : MonoBehaviour
     // First slow then stop time
     private IEnumerator SlowMotionEndGame()
     {
+        //Disable all ability buttons on win
+        Button[] buttons = FindObjectsOfType<Button>();
+
+        foreach (Button button in buttons)
+        {
+            if (button.gameObject.CompareTag("AbilityModiffier"))
+                button.gameObject.SetActive(false);
+        }
+        // Slow time
         Time.timeScale = slowdownFactor;
         Time.fixedDeltaTime = Time.timeScale * 0.02f;
         yield return new WaitForSecondsRealtime(4);
         Time.timeScale = 0;
         soundManager.StopAllAudioEffects();
-        gameOverText.enabled = true;
         restartButton.gameObject.SetActive(true);
     }
 
@@ -181,6 +193,9 @@ public class GameManager : MonoBehaviour
         if (enemyStats.isDead())
         {
             ++enemyCounter;
+            // Play player sound every 10 kills
+            if (enemyCounter % 10 == 0)
+                soundManager.PlayThenthKillSound();
             // Adds enemy XP to player total XP
             playerStats.AddExperience(enemyStats.ExperienceValue);
             soundManager.PlayEnemyDeathSound();
@@ -236,19 +251,19 @@ public class GameManager : MonoBehaviour
         }
         return 0;
     }
-
+    // Modify Player starts based on Ability Button input
     public void ModifyAbility(int abilityIndex)
     {
         switch (abilityIndex)
         {
             case 1:
                 Debug.Log($"Player was moving with speed: {playerStats.MovementSpeed}");
-                playerStats.MovementSpeed += 1;
+                playerStats.MovementSpeed += 0.1f;
                 Debug.Log($"Current player movement speed: {playerStats.MovementSpeed}");
                 break;
             case 2:
                 Debug.Log($"Players rate of fire: {playerController.FireRate}");
-                playerController.FireRate += 0.1f;
+                playerController.FireRate += 0.05f;
                 Debug.Log($"Current player sprint movement modifier: {playerController.FireRate}");
                 break;
             case 3:
